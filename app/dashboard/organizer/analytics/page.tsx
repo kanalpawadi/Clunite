@@ -152,27 +152,53 @@ export default function EventAnalyticsPage() {
         </Card>
 
         {/* Key Performance Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {performanceMetrics.map((metric, index) => (
-            <Card key={index} className="border-slate-200 bg-white">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl ${getMetricColor(metric.color)}`}>
-                    <metric.icon className="h-6 w-6" />
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">Key Performance Indicators</h2>
+              <p className="text-slate-600">Real-time metrics and event performance</p>
+            </div>
+            <Select defaultValue="30d">
+              <SelectTrigger className="w-[140px] bg-white border-slate-200">
+                <SelectValue placeholder="Time Period" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 90 days</SelectItem>
+                <SelectItem value="12m">Last 12 months</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {performanceMetrics.map((metric, index) => (
+              <Card 
+                key={index} 
+                className="border-slate-200 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl ${getMetricColor(metric.color)} shadow-sm`}>
+                      <metric.icon className="h-6 w-6" />
+                    </div>
+                    <Badge className="bg-green-50 text-green-700 border-green-200 px-2 py-1 text-xs font-semibold">
+                      {metric.change}
+                    </Badge>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">{metric.title}</p>
-                  <p className="text-3xl font-black text-slate-900">{metric.value}</p>
-                  <div className="flex items-center text-sm">
-                    <TrendingUp className="h-4 w-4 mr-1 text-green-600" />
-                    <span className="text-green-600 font-medium">{metric.change}</span>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">{metric.title}</p>
+                    <p className="text-3xl font-black text-slate-900">{metric.value}</p>
+                    <div className="flex items-center text-sm">
+                      <TrendingUp className="h-4 w-4 mr-1 text-green-600" />
+                      <span className="text-green-600 font-medium">Trending upward</span>
+                    </div>
+                    <p className="text-xs text-slate-500 font-medium">{metric.description}</p>
                   </div>
-                  <p className="text-xs text-slate-500 font-medium">{metric.description}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* Analytics Tabs */}

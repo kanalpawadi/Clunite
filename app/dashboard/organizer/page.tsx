@@ -6,9 +6,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   BarChart3,
   TrendingUp,
+  TrendingDown,
   Calendar,
   Users,
   DollarSign,
@@ -268,31 +270,62 @@ export default function OrganizerDashboardPage() {
         </div>
 
         {/* Performance Metrics */}
-        <Card className="border-0 shadow-lg bg-white">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-gray-900">Performance Overview</CardTitle>
-            <CardDescription className="text-gray-600">Key metrics for your events</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {performanceMetrics.map((metric, index) => (
-                <div
-                  key={index}
-                  className="text-center p-4 rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300"
-                >
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 ${getMetricColor(metric.color)}`}
-                  >
-                    <metric.icon className="h-6 w-6" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{metric.value}</div>
-                  <div className="text-sm font-semibold text-green-600 mb-1">{metric.change}</div>
-                  <div className="text-xs text-gray-500 font-medium">{metric.description}</div>
-                </div>
-              ))}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Performance Overview</h2>
+              <p className="text-gray-600">Key metrics for your events</p>
             </div>
-          </CardContent>
-        </Card>
+            <Select defaultValue="30d">
+              <SelectTrigger className="w-[140px] bg-white border-gray-200">
+                <SelectValue placeholder="Time Period" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 90 days</SelectItem>
+                <SelectItem value="12m">Last 12 months</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {performanceMetrics.map((metric, index) => (
+              <Card 
+                key={index} 
+                className="border-0 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-white"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl ${getMetricColor(metric.color)}`}>
+                      <metric.icon className="h-6 w-6" />
+                    </div>
+                    <Badge 
+                      className={`${metric.changeType === "positive" ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"} px-2 py-1 text-xs font-semibold`}
+                    >
+                      {metric.change}
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{metric.title}</p>
+                    <p className="text-3xl font-black text-gray-900">{metric.value}</p>
+                    <div className="flex items-center text-sm">
+                      {metric.changeType === "positive" ? (
+                        <TrendingUp className="h-4 w-4 mr-1 text-green-600" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 mr-1 text-red-600" />
+                      )}
+                      <span className={`${metric.changeType === "positive" ? "text-green-600" : "text-red-600"} font-medium`}>
+                        {metric.changeType === "positive" ? "Trending upward" : "Trending downward"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 font-medium">{metric.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="events" className="space-y-6">
