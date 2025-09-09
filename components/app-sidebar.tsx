@@ -1,6 +1,7 @@
 "use client"
 
 import { Home, Trophy, Award, QrCode, Settings, LogOut, ChevronLeft, ChevronRight, Building2 } from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
   Sidebar,
   SidebarContent,
@@ -54,15 +55,28 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-slate-200 bg-white shadow-sm transition-all duration-300 ease-in-out"
+      className="border-r border-slate-200 bg-white transition-[width,transform] duration-200 ease-in-out"
     >
       {/* Header with improved branding */}
       <SidebarHeader className="p-6 border-b border-slate-100">
-        <div className="flex items-center justify-between">
+        <div className={cn(
+          "flex items-center transition-all duration-300 ease-in-out",
+          isCollapsed ? "justify-center" : "justify-between"
+        )}>
           {/* New Clunite Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="relative group">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+          <div 
+            className={cn(
+              "flex items-center cursor-pointer group/logo",
+              isCollapsed ? "justify-center" : "space-x-3"
+            )}
+            onClick={isCollapsed ? toggleSidebar : undefined}
+          >
+            <div className="relative">
+              <div className={cn(
+                "bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300",
+                "group-hover/logo:shadow-xl group-hover/logo:scale-105",
+                isCollapsed ? "w-10 h-10" : "w-12 h-12"
+              )}>
                 <span className="text-white font-black text-xl">C</span>
               </div>
             </div>
@@ -74,21 +88,17 @@ export function AppSidebar() {
             )}
           </div>
 
-          {/* Improved Toggle Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="w-10 h-10 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 group border border-slate-200 hover:border-indigo-200 hover:shadow-sm flex items-center justify-center"
-            onClick={toggleSidebar}
-          >
-            <div className="relative overflow-hidden">
-              {isCollapsed ? (
-                <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-all duration-300 transform group-hover:translate-x-0.5" />
-              ) : (
-                <ChevronLeft className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-all duration-300 transform group-hover:-translate-x-0.5" />
-              )}
-            </div>
-          </Button>
+          {/* Improved Toggle Button - Only show when expanded */}
+          {!isCollapsed && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-10 h-10 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 group border border-slate-200 hover:border-indigo-200 hover:shadow-sm flex items-center justify-center"
+              onClick={toggleSidebar}
+            >
+              <ChevronLeft className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-all duration-300 transform group-hover:-translate-x-0.5" />
+            </Button>
+          )}
         </div>
       </SidebarHeader>
 
