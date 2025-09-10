@@ -27,30 +27,30 @@ export default function HostEventPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-white p-6">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+        <div className="bg-gradient-to-r from-orange-500 via-rose-500 to-purple-500 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 backdrop-blur-xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12 backdrop-blur-xl"></div>
           <div className="relative">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center mb-4">
-                  <h1 className="text-4xl font-black font-heading">Event Management Hub</h1>
-                  <Sparkles className="h-10 w-10 ml-4 text-yellow-300" />
+                  <h1 className="text-4xl font-black font-heading text-white bg-clip-text">Event Management Hub</h1>
+                  <Sparkles className="h-10 w-10 ml-4 text-rose-200" />
                 </div>
-                <p className="text-indigo-100 text-xl leading-relaxed max-w-2xl">
+                <p className="text-rose-50 text-xl leading-relaxed max-w-2xl">
                   Create engaging events and track your success with powerful analytics. Choose your path to campus
                   event excellence.
                 </p>
               </div>
               <div className="flex flex-col items-end space-y-4">
-                <Badge className="bg-white/20 text-white border-white/30 px-6 py-3 text-base font-semibold">
+                <Badge className="bg-white/10 text-white border-rose-300/20 px-6 py-3 text-base font-semibold backdrop-blur-md">
                   Organizer Dashboard
                 </Badge>
 
                 {/* Unified Action Button */}
                 <div className="flex">
                   <Link href="/dashboard/organizer/host/create">
-                    <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30 font-semibold px-8 py-3 rounded-l-2xl rounded-r-none border-r-0 transition-all duration-300">
+                    <Button className="bg-white/10 hover:bg-white/20 text-white border-cyan-300/20 font-semibold px-8 py-3 rounded-l-2xl rounded-r-none border-r-0 transition-all duration-300 backdrop-blur-md hover:shadow-lg">
                       <Plus className="h-5 w-5 mr-2" />
                       Host New Event
                     </Button>
@@ -58,19 +58,19 @@ export default function HostEventPage() {
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30 font-semibold px-4 py-3 rounded-r-2xl rounded-l-none transition-all duration-300">
+                      <Button className="bg-white/10 hover:bg-white/20 text-white border-cyan-300/20 font-semibold px-4 py-3 rounded-r-2xl rounded-l-none transition-all duration-300 backdrop-blur-md hover:shadow-lg">
                         <ChevronDown className="h-5 w-5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-64 mt-2">
                       <DropdownMenuItem asChild>
                         <Link href="/dashboard/organizer/host/create" className="flex items-center p-3 cursor-pointer">
-                          <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl flex items-center justify-center mr-3 shadow-md">
                             <Plus className="h-5 w-5 text-white" />
                           </div>
                           <div>
-                            <div className="font-semibold text-gray-900">Host New Event</div>
-                            <div className="text-sm text-gray-600">Create workshops, competitions & more</div>
+                            <div className="font-semibold text-rose-900">Host New Event</div>
+                            <div className="text-sm text-rose-600">Create workshops, competitions & more</div>
                           </div>
                         </Link>
                       </DropdownMenuItem>
@@ -79,12 +79,12 @@ export default function HostEventPage() {
                           href="/dashboard/organizer/host/analytics"
                           className="flex items-center p-3 cursor-pointer"
                         >
-                          <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mr-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-rose-500 to-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-md">
                             <BarChart3 className="h-5 w-5 text-white" />
                           </div>
                           <div>
-                            <div className="font-semibold text-gray-900">Organizers Panel</div>
-                            <div className="text-sm text-gray-600">View analytics & event insights</div>
+                            <div className="font-semibold text-rose-900">Organizers Panel</div>
+                            <div className="text-sm text-rose-600">View analytics & event insights</div>
                           </div>
                         </Link>
                       </DropdownMenuItem>
@@ -99,26 +99,58 @@ export default function HostEventPage() {
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            { icon: Calendar, label: "Events Hosted", value: "12", color: "from-blue-500 to-blue-600" },
-            { icon: Users, label: "Total Participants", value: "1,247", color: "from-green-500 to-green-600" },
-            { icon: TrendingUp, label: "Success Rate", value: "94%", color: "from-purple-500 to-purple-600" },
-            { icon: Award, label: "Avg Rating", value: "4.8", color: "from-orange-500 to-orange-600" },
+            { 
+              icon: Calendar, 
+              label: "Total Events", 
+              value: "2", 
+              trend: "+18%",
+              desc: "Events hosted",
+              color: "from-purple-600 to-fuchsia-600" 
+            },
+            { 
+              icon: Users, 
+              label: "Registrations", 
+              value: "0", 
+              trend: "+5%",
+              desc: "Sign-ups received",
+              color: "from-fuchsia-600 to-pink-600" 
+            },
+            { 
+              icon: TrendingUp, 
+              label: "Attendance", 
+              value: "87.6%", 
+              trend: "+8%",
+              desc: "Average rate",
+              color: "from-pink-600 to-rose-600" 
+            },
+            { 
+              icon: Award, 
+              label: "Engagement", 
+              value: "74%", 
+              trend: "-2%",
+              desc: "Interaction level",
+              color: "from-rose-600 to-purple-600" 
+            },
           ].map((stat, index) => (
             <Card
               key={index}
-              className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
             >
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-3xl font-black font-heading text-foreground">{stat.value}</p>
-                  </div>
+                <div className="flex items-center justify-between mb-4">
                   <div
                     className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center`}
                   >
                     <stat.icon className="h-6 w-6 text-white" />
                   </div>
+                  <span className={`text-sm font-medium ${
+                    stat.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'
+                  }`}>{stat.trend}</span>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                  <p className="text-base font-medium text-gray-600">{stat.label}</p>
+                  <p className="text-sm text-gray-500 mt-1">{stat.desc}</p>
                 </div>
               </CardContent>
             </Card>
@@ -235,7 +267,7 @@ export default function HostEventPage() {
               </div>
 
               <Link href="/dashboard/organizer/host/analytics" className="block">
-                <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <Button className="w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                   <BarChart3 className="h-5 w-5 mr-2" />
                   View Analytics Dashboard
                   <ArrowRight
@@ -248,10 +280,10 @@ export default function HostEventPage() {
         </div>
 
         {/* Recent Activity */}
-        <Card className="border-0 shadow-lg">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-fuchsia-50">
           <CardHeader>
-            <CardTitle className="text-xl font-bold font-heading">Recent Activity</CardTitle>
-            <CardDescription>Your latest event management activities</CardDescription>
+            <CardTitle className="text-xl font-bold font-heading text-purple-900">Recent Activity</CardTitle>
+            <CardDescription className="text-purple-600">Your latest event management activities</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
