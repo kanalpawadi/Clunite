@@ -38,7 +38,10 @@ async function getEventAnalytics(eventId: string) {
   // Get registrations with created_at timestamp
   const { data: registrations } = await supabase
     .from("event_registrations")
-    .select("*, users(department)")
+    .select(`
+      *,
+      registration_data
+    `)
     .eq("event_id", eventId)
     .order("created_at", { ascending: true })
 
@@ -81,21 +84,60 @@ async function getEventAnalytics(eventId: string) {
 
   // Generate demographic data from registrations
   const departmentCounts = new Map()
+  const collegeStats = new Map()
   const departmentColors = {
     "Computer Science": "#3b82f6",
-    "Business": "#10b981",
-    "Engineering": "#f59e0b",
-    "Arts": "#ef4444",
+    "Engineering": "#10b981",
+    "Technology": "#f59e0b",
+    "Science": "#ef4444",
     "Other": "#8b5cf6"
   }
   
   if (registrations && registrations.length > 0) {
     registrations.forEach(reg => {
-      const department = reg.users?.department || "Other"
-      const currentCount = departmentCounts.get(department) || 0
-      departmentCounts.set(department, currentCount + 1)
+      if (reg.registration_data) {
+        // Handle solo registrations
+        if (reg.registration_data.participant_details) {
+          const college = reg.registration_data.participant_details.college || "Other"
+          collegeStats.set(college, (collegeStats.get(college) || 0) + 1)
+          
+          // Infer department from college/course info
+          let department = "Other"
+          const collegeLC = college.toLowerCase()
+          if (collegeLC.includes('engineering') || collegeLC.includes('tech')) {
+            department = "Engineering"
+          } else if (collegeLC.includes('computer') || collegeLC.includes('it')) {
+            department = "Computer Science"
+          } else if (collegeLC.includes('science')) {
+            department = "Science"
+          }
+          departmentCounts.set(department, (departmentCounts.get(department) || 0) + 1)
+        }
+        
+        // Handle team registrations
+        if (reg.registration_data.team_members) {
+          reg.registration_data.team_members.forEach(member => {
+            const college = member.college || "Other"
+            collegeStats.set(college, (collegeStats.get(college) || 0) + 1)
+            
+            // Infer department from college/course info
+            let department = "Other"
+            const collegeLC = college.toLowerCase()
+            if (collegeLC.includes('engineering') || collegeLC.includes('tech')) {
+              department = "Engineering"
+            } else if (collegeLC.includes('computer') || collegeLC.includes('it')) {
+              department = "Computer Science"
+            } else if (collegeLC.includes('science')) {
+              department = "Science"
+            }
+            departmentCounts.set(department, (departmentCounts.get(department) || 0) + 1)
+          })
+        }
+      }
     })
-  } else {
+  }
+  
+  if (departmentCounts.size === 0) {
     // Fallback if no registrations
     departmentCounts.set("No Data", 1)
   }
@@ -122,14 +164,36 @@ export default async function EventAnalyticsPage({ params }: { params: { id: str
   }
 
   // Calculate KPI metrics from real data
-  const totalRegistrations = registrations.length
+  const totalRegistrations = registrations.reduce((total, reg) => {
+    if (reg.registration_data) {
+      if (reg.registration_data.team_members) {
+        // For team registrations, count all team members
+        return total + reg.registration_data.team_members.length;
+      } else if (reg.registration_data.participant_details) {
+        // For solo registrations, count as 1
+        return total + 1;
+      }
+    }
+    return total;
+  }, 0);
+
   const registrationRate = event.max_participants ? (totalRegistrations / event.max_participants) * 100 : 0
-  const revenue = event.price ? totalRegistrations * event.price : 0
+  const revenue = event.entry_fee ? totalRegistrations * event.entry_fee : 0
   
-  // For page views, we'll use a calculated value based on registrations
-  // In a real application, this would come from analytics tracking
+  // Calculate engagement metrics
+  const uniqueColleges = collegeStats.size;
+  const averageTeamSize = registrations.reduce((sum, reg) => {
+    if (reg.registration_data?.team_members) {
+      return sum + reg.registration_data.team_members.length;
+    }
+    return sum + 1;
+  }, 0) / registrations.length || 1;
+  
+  // For page views, calculate based on registrations and assumed bounce rate
+  const bounceRate = 0.65 // Assume 65% bounce rate
   const conversionRate = 0.15 // Assume 15% conversion rate from views to registrations
-  const pageViews = Math.max(Math.round(totalRegistrations / conversionRate), totalRegistrations * 3)
+  const estimatedViews = Math.ceil(totalRegistrations / (conversionRate * (1 - bounceRate)))
+  const pageViews = Math.max(estimatedViews, totalRegistrations * 4)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-6">
