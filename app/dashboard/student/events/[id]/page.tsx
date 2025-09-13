@@ -60,6 +60,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
   const [registering, setRegistering] = useState(false)
   const [registrationStatus, setRegistrationStatus] = useState<"idle" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const [isRegistered, setIsRegistered] = useState(false)
 
   const [registrationData, setRegistrationData] = useState({
@@ -88,7 +89,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
   const fetchEventDetails = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data: eventData, error } = await supabase
         .from("events")
         .select(`
           *,
@@ -98,7 +99,30 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
         .single()
 
       if (error) throw error
-      setEvent(data)
+
+      // Get fresh registration count
+      const { data: regCount } = await supabase
+        .from("event_registrations")
+        .select("registration_data")
+        .eq("event_id", params.id)
+
+      // Calculate total participants including team members
+      const totalParticipants = regCount?.reduce((total, reg) => {
+        if (reg.registration_data?.team_members) {
+          return total + reg.registration_data.team_members.length;
+        } else if (reg.registration_data?.participant_details) {
+          return total + 1;
+        }
+        return total;
+      }, 0) || 0;
+
+      // Update the event data with the fresh count
+      const updatedEvent = {
+        ...eventData,
+        current_participants: totalParticipants
+      };
+
+      setEvent(updatedEvent)
     } catch (error) {
       console.error("Error fetching event:", error)
     } finally {
@@ -108,16 +132,11 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
 
   const checkRegistrationStatus = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) return
-
+      // Check registration using email instead of user ID
       const { data, error } = await supabase
         .from("event_registrations")
         .select("id")
         .eq("event_id", params.id)
-        .eq("user_id", user.id)
         .maybeSingle()
 
       if (error && error.code !== "PGRST116") {
@@ -177,7 +196,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
   }
 
   const removeTeamMember = (index: number) => {
-    const minMembers = event?.team_size === "2_people" ? 2 : event?.team_size === "group_4+" ? 4 : 1
+    const minMembers = event?.team_size === "2_people" ? 2 : event?.team_size === "group_4" ? 4 : 1
     if (registrationData.teamMembers.length > minMembers) {
       setRegistrationData((prev) => ({
         ...prev,
@@ -222,13 +241,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
       setRegistering(true)
       setRegistrationStatus("idle")
       setErrorMessage("")
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) {
-        throw new Error("Please log in to register for events")
-      }
+      setSuccessMessage("")
 
       // Validate required fields
       if (event.team_size === "solo") {
@@ -236,16 +249,60 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
         if (!member.name || !member.email || !member.phone) {
           throw new Error("Please fill in all required fields")
         }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(member.email)) {
+          throw new Error("Please enter a valid email address")
+        }
+
+        // Check if already registered with this email
+        const { data: existingReg } = await supabase
+          .from("event_registrations")
+          .select("id")
+          .eq("event_id", params.id)
+          .eq("registration_data->participant_details->email", member.email.toLowerCase())
+          .maybeSingle()
+
+        if (existingReg) {
+          throw new Error("This email address has already been used to register for this event")
+        }
       } else {
         // Validate team data
         if (!registrationData.teamName) {
           throw new Error("Please provide a team name")
         }
 
+        // Check team member emails
+        const emails = new Set()
         for (let i = 0; i < registrationData.teamMembers.length; i++) {
           const member = registrationData.teamMembers[i]
           if (!member.name || !member.email) {
             throw new Error(`Please fill in name and email for team member ${i + 1}`)
+          }
+
+          // Validate email format
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(member.email)) {
+            throw new Error(`Please enter a valid email address for team member ${i + 1}`)
+          }
+
+          const email = member.email.toLowerCase()
+          if (emails.has(email)) {
+            throw new Error("Each team member must have a unique email address")
+          }
+          emails.add(email)
+
+          // Check if email already registered
+          const { data: existingReg } = await supabase
+            .from("event_registrations")
+            .select("id")
+            .eq("event_id", params.id)
+            .or(`participant_details->email.eq.${email},team_members->email.cs.{${email}}`)
+            .maybeSingle()
+
+          if (existingReg) {
+            throw new Error(`The email address ${member.email} has already been used to register for this event`)
           }
         }
       }
@@ -272,55 +329,80 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
       // Create registration record
       const registrationPayload = {
         event_id: params.id,
-        user_id: user.id,
-        registration_type: event.team_size,
         team_name: event.team_size !== "solo" ? registrationData.teamName : null,
-        participant_details:
-          event.team_size === "solo"
-            ? {
-                name: registrationData.teamMembers[0].name,
-                email: registrationData.teamMembers[0].email,
-                phone: registrationData.teamMembers[0].phone,
-                college: registrationData.teamMembers[0].college,
-                year: registrationData.teamMembers[0].year,
-                skills: registrationData.participantSkills,
-                experience: registrationData.participantExperience,
-                specialRequirements: registrationData.specialRequirements,
-                dietaryRestrictions: registrationData.dietaryRestrictions,
-                emergencyContact: registrationData.emergencyContact,
-              }
+        status: "registered",  // Using the correct enum value from database
+        registration_data: {
+          registration_type: event.team_size,
+          participant_details: event.team_size === "solo" ? {
+            name: registrationData.teamMembers[0].name.trim(),
+            email: registrationData.teamMembers[0].email.trim().toLowerCase(),
+            phone: registrationData.teamMembers[0].phone.trim(),
+            college: registrationData.teamMembers[0].college.trim(),
+            year: registrationData.teamMembers[0].year.trim(),
+            skills: registrationData.participantSkills?.trim(),
+            experience: registrationData.participantExperience?.trim(),
+          } : null,
+          team_members: event.team_size !== "solo"
+            ? registrationData.teamMembers.map(member => ({
+                name: member.name.trim(),
+                email: member.email.trim().toLowerCase(),
+                phone: member.phone?.trim(),
+                college: member.college?.trim(),
+                year: member.year?.trim(),
+              }))
             : null,
-        team_members: event.team_size !== "solo" ? registrationData.teamMembers : null,
-        additional_info: {
-          specialRequirements: registrationData.specialRequirements,
-          dietaryRestrictions: registrationData.dietaryRestrictions,
-          emergencyContact: registrationData.emergencyContact,
+          additional_info: {
+            specialRequirements: registrationData.specialRequirements?.trim(),
+            dietaryRestrictions: registrationData.dietaryRestrictions?.trim(),
+            emergencyContact: registrationData.emergencyContact?.trim(),
+          }
         },
-        status: "confirmed",
-        registered_at: new Date().toISOString(),
       }
 
-      const { error: registrationError } = await supabase.from("event_registrations").insert(registrationPayload)
+      // Insert the registration
+      const { data: newRegistration, error: registrationError } = await supabase
+        .from("event_registrations")
+        .insert(registrationPayload)
+        .select()
+        .single()
 
-      if (registrationError) throw registrationError
+      if (registrationError) {
+        throw new Error(registrationError.message || "Failed to save registration")
+      }
 
-      // Update event participant count
-      const newParticipantCount = event.team_size === "solo" ? 1 : registrationData.teamMembers.length
+      // Update the participant count in the events table
       const { error: updateError } = await supabase
         .from("events")
         .update({
-          current_participants: currentEvent.current_participants + newParticipantCount,
+          current_participants: currentEvent.current_participants + (event.team_size === "solo" ? 1 : registrationData.teamMembers.length)
         })
         .eq("id", params.id)
 
-      if (updateError) throw updateError
+      if (registrationError) {
+        console.error("Registration error:", registrationError)
+        throw new Error(registrationError.message || "Failed to save registration")
+      }
 
+      if (!newRegistration) {
+        throw new Error("Registration data not saved properly")
+      }
+
+      // Log successful registration
+      console.log("Registration saved successfully")
+
+      if (updateError) {
+        console.error("Failed to update participant count:", updateError)
+        // Don't throw here since registration was successful
+      }
+
+      // Update UI state
       setRegistrationStatus("success")
+      setSuccessMessage("Registration completed successfully! You will receive a confirmation email shortly.")
       setIsRegistered(true)
       setShowRegistrationDialog(false)
 
-      // Refresh event data
-      fetchEventDetails()
+      // Refresh event data to show updated participant count
+      await fetchEventDetails()
     } catch (error) {
       console.error("Registration error:", error)
       setRegistrationStatus("error")
@@ -379,8 +461,8 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
         return "Individual Participation"
       case "2_people":
         return "Team of 2 People"
-      case "group_4+":
-        return "Team of 4+ People"
+      case "group_4":
+        return "Team of 4 People"
       default:
         return "Individual Participation"
     }
@@ -897,12 +979,21 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
                     </div>
                   </div>
 
-                  {/* Registration Button */}
+                  {/* Registration Status Messages */}
                   {registrationStatus === "success" && (
                     <Alert className="mb-4 border-green-200 bg-green-50">
                       <CheckCircle className="h-4 w-4 text-green-600" />
                       <AlertDescription className="text-green-800">
-                        Registration successful! Check your email for confirmation.
+                        {successMessage || "Registration successful! You're all set for the event."}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {registrationStatus === "error" && (
+                    <Alert className="mb-4 border-red-200 bg-red-50">
+                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                      <AlertDescription className="text-red-800">
+                        {errorMessage}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -923,7 +1014,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
                       ) : event.team_size === "solo" ? (
                         "Register Now"
                       ) : (
-                        `Register Team (${getTeamSizeDisplay(event.team_size || "solo")})`
+                        `Register Team`
                       )}
                     </Button>
                   ) : (
