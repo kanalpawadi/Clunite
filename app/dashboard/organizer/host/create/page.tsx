@@ -297,27 +297,28 @@ export default function CreateEventPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-white p-6">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header with Back Button */}
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="bg-gradient-to-br from-violet-500 via-indigo-500 to-blue-500 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 backdrop-blur-xl"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-r from-blue-400 to-violet-400 opacity-20 rounded-full translate-y-20 -translate-x-20 blur-2xl"></div>
           <div className="relative">
             <div className="flex items-center justify-between">
               <div>
                 <Link
                   href="/dashboard/organizer/host"
-                  className="inline-flex items-center text-indigo-100 hover:text-white mb-4 transition-colors"
+                  className="inline-flex items-center text-blue-100 hover:text-white mb-4 transition-colors backdrop-blur-sm bg-white/10 px-4 py-2 rounded-lg"
                 >
                   <ArrowLeft className="h-5 w-5 mr-2" />
                   Back to Event Hub
                 </Link>
                 <div className="flex items-center mb-4">
-                  <h1 className="text-4xl font-black font-heading">Create New Event</h1>
-                  <Sparkles className="h-10 w-10 ml-4 text-yellow-300" />
+                  <h1 className="text-4xl font-black font-heading bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">Create New Event</h1>
+                  <Sparkles className="h-10 w-10 ml-4 text-indigo-200" />
                 </div>
-                <p className="text-indigo-100 text-xl leading-relaxed">
+                <p className="text-blue-50 text-xl leading-relaxed backdrop-blur-sm">
                   Create an engaging event for your campus community
                 </p>
               </div>
-              <Badge className="bg-white/20 text-white border-white/30 px-6 py-3 text-base font-semibold">
+              <Badge className="bg-gradient-to-r from-violet-400/20 to-blue-400/20 text-white border-white/20 px-6 py-3 text-base font-semibold backdrop-blur-md shadow-lg">
                 {submitStatus === "success" ? "Published" : "Draft"}
               </Badge>
             </div>
