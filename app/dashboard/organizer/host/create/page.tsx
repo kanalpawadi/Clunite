@@ -90,11 +90,13 @@ export default function CreateEventPage() {
     setSubmitStatus("idle")
 
     try {
-      // Create preview
+      // Create preview immediately
       const previewUrl = URL.createObjectURL(file)
       setBannerPreview(previewUrl)
 
-      // Store file for later upload
+      // Upload immediately and store permanent URL so it appears everywhere after create
+      const uploadedUrl = await uploadBannerToBlob(file)
+      handleInputChange("bannerUrl", uploadedUrl)
       handleInputChange("banner", file)
     } catch (error) {
       console.error("Error handling banner:", error)
@@ -173,16 +175,9 @@ export default function CreateEventPage() {
         throw new Error("Event start date must be after registration deadline")
       }
 
-      let bannerUrl = `/placeholder.svg?height=400&width=800&query=${encodeURIComponent(formData.title + " event")}`
-
-      if (formData.banner) {
-        try {
-          bannerUrl = await uploadBannerToBlob(formData.banner)
-        } catch (error) {
-          console.error("Banner upload failed:", error)
-          // Continue with placeholder if banner upload fails
-        }
-      }
+      let bannerUrl = formData.bannerUrl || `/placeholder.svg?height=400&width=800&query=${encodeURIComponent(
+        formData.title + " event",
+      )}`
 
       // Handle club creation/selection
       let clubId = null
