@@ -1,20 +1,20 @@
-## Clunite — Campus Event & Club Management (Next.js + Supabase)
+## 🎓 Clunite — Campus Event & Club Management
 
-Clunite helps students discover events and clubs, and helps organizers host and manage them. This repository is a single Next.js 14 app with Supabase, Tailwind, and shadcn/ui.
+Clunite helps students discover events and clubs, and enables organizers to host and manage them—efficiently and at scale. This repository contains a single Next.js 14 application powered by Supabase, Tailwind CSS, and shadcn/ui.
 
-### Highlights
+### 🌟 Highlights
 - Student and Organizer dashboards under `app/dashboard/*`
-- Browse and join clubs, view events, register, and manage hosting
-- Supabase for data (users, clubs, events, memberships, registrations)
-- Vercel Blob for image uploads via `POST /api/upload`
+- Discover events, join clubs, register, and manage hosting
+- Typed Supabase client for users, clubs, events, memberships, and registrations
+- Image uploads via Vercel Blob (`POST /api/upload`)
 
-## Tech Stack
+## 🧰 Tech Stack
 - Next.js 14 (App Router), React 18, TypeScript
 - Tailwind CSS + shadcn/ui (Radix primitives)
 - Supabase (database + client)
 - Vercel (hosting) + Vercel Analytics
 
-## Project Structure
+## 📁 Project Structure
 ```
 .
 ├─ app/
@@ -49,17 +49,17 @@ Clunite helps students discover events and clubs, and helps organizers host and 
 └─ package.json
 ```
 
-## Features (summary)
-- Student: discover events, see details, join clubs, track registrations
-- Organizer: verify as host, create events, view analytics pages
-- Shared: responsive UI, theming, prebuilt components (shadcn/ui)
+## ✨ Features
+- 🧑‍🎓 Student: discover events, view details, join clubs, track registrations
+- 🧑‍💼 Organizer: verify as host, create events, view analytics pages
+- 🧩 Shared: responsive UI, theming, and prebuilt components (shadcn/ui)
 
-## Requirements
+## 🧱 Requirements
 - Node.js 18+
 - Supabase project (URL + anon key)
 - Vercel Blob token (for image uploads)
 
-## Setup
+## 🚀 Setup
 1) Install dependencies
 ```bash
 npm install
@@ -82,32 +82,32 @@ pnpm dev
 ```
 Open http://localhost:3000
 
-## Scripts
+## 📜 Scripts
 - `dev`: start Next dev server
 - `build`: production build
 - `start`: start production server
 - `lint`: run ESLint
 
-## API
+## 🔌 API
 - `POST /api/upload`: multipart/form-data with `file` (image), returns `{ url }`
 
-## Data Model (from `lib/supabase.ts`)
+## 🗄️ Data Model (from `lib/supabase.ts`)
 - `users`: id, email, full_name, role, college, avatar_url, bio
 - `clubs`: id, name, category, college, media, counts, verification, metadata
 - `events`: id, title, description, club_id, dates, status, tags, image_url, etc.
 - `club_memberships`: user_id, club_id, role
 - `event_registrations`: user_id, event_id, status, team_name
 
-## Deployment
+## 🚢 Deployment
 - Deploy on Vercel. Set env vars there:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `BLOB_READ_WRITE_TOKEN`
 - Images are uploaded to Vercel Blob via the API route.
 
-## Notes
+## 📝 Notes
 - `next.config.mjs` ignores TypeScript/ESLint build errors and uses unoptimized images for easier local/dev workflows.
 - Tailwind is configured for `app`, `components`, and `pages` directories; shadcn/ui tokens in `components.json`.
 
-## License
+## 📄 License
 MIT
