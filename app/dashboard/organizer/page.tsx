@@ -78,18 +78,19 @@ export default function OrganizerDashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white relative overflow-hidden">
+        {/* Enhanced Header */}
+        <div className="bg-gradient-to-r from-primary via-purple-600 to-indigo-600 rounded-2xl p-8 text-white relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-          <div className="relative">
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+          <div className="relative backdrop-blur-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold mb-2">Event Participants Dashboard</h1>
-                <p className="text-indigo-100 text-lg">View and manage participants for all events</p>
+                <h1 className="text-3xl font-bold mb-2 drop-shadow-sm">Event Participants Dashboard</h1>
+                <p className="text-purple-100 text-lg drop-shadow-sm">View and manage participants for all events</p>
               </div>
               <div className="flex items-center space-x-4">
                 <Link href="/dashboard/organizer/host">
-                  <Button className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold px-6 py-3 rounded-xl backdrop-blur-sm">
+                  <Button className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold px-6 py-3 rounded-xl backdrop-blur-sm hover:scale-105 transition-all duration-300 hover:shadow-lg">
                     <Plus className="h-5 w-5 mr-2" />
                     Host New Event
                   </Button>
@@ -99,52 +100,52 @@ export default function OrganizerDashboardPage() {
           </div>
         </div>
 
-        {/* Summary Stats */}
+        {/* Enhanced Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-0 shadow-lg bg-white">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-card via-blue-50/30 to-indigo-50/20 hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 group backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg group-hover:scale-110 transition-all duration-300">
                   <Calendar className="h-6 w-6" />
                 </div>
-                <Badge className="bg-blue-100 text-blue-800">Total</Badge>
+                <Badge className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border-blue-200">Total</Badge>
               </div>
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Events</p>
-                <p className="text-3xl font-black text-gray-900">{events.length}</p>
-                <p className="text-xs text-gray-500 font-medium">All events in system</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Total Events</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{events.length}</p>
+                <p className="text-xs text-muted-foreground font-medium">All events in system</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-white">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-card via-green-50/30 to-emerald-50/20 hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 group backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-xl bg-green-50 text-green-600">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg group-hover:scale-110 transition-all duration-300">
                   <Users className="h-6 w-6" />
                 </div>
-                <Badge className="bg-green-100 text-green-800">All Events</Badge>
+                <Badge className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-200">All Events</Badge>
               </div>
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Participants</p>
-                <p className="text-3xl font-black text-gray-900">{totalParticipants}</p>
-                <p className="text-xs text-gray-500 font-medium">Across all events</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Total Participants</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{totalParticipants}</p>
+                <p className="text-xs text-muted-foreground font-medium">Across all events</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-white">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-card via-purple-50/30 to-primary/10 hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 group backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-xl bg-purple-50 text-purple-600">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-purple-600 text-white shadow-lg group-hover:scale-110 transition-all duration-300">
                   <UserCheck className="h-6 w-6" />
                 </div>
-                <Badge className="bg-purple-100 text-purple-800">Active</Badge>
+                <Badge className="bg-gradient-to-r from-purple-100 to-primary/20 text-primary border-primary/30">Active</Badge>
               </div>
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Registered</p>
-                <p className="text-3xl font-black text-gray-900">{totalRegistered}</p>
-                <p className="text-xs text-gray-500 font-medium">Currently registered</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Registered</p>
+                <p className="text-3xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">{totalRegistered}</p>
+                <p className="text-xs text-muted-foreground font-medium">Currently registered</p>
               </div>
             </CardContent>
           </Card>

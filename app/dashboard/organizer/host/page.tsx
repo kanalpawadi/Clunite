@@ -279,50 +279,6 @@ export default function HostEventPage() {
           </Card>
         </div>
 
-        {/* Recent Activity */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-fuchsia-50">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold font-heading text-purple-900">Recent Activity</CardTitle>
-            <CardDescription className="text-purple-600">Your latest event management activities</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                { action: "Created", event: "AI Workshop 2024", time: "2 hours ago", status: "published" },
-                { action: "Updated", event: "Hackathon Finals", time: "1 day ago", status: "draft" },
-                { action: "Completed", event: "Design Thinking Session", time: "3 days ago", status: "completed" },
-              ].map((activity, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 border border-border rounded-2xl hover:shadow-md transition-all duration-300"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
-                      <Calendar className="h-5 w-5 text-slate-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground">
-                        {activity.action} "{activity.event}"
-                      </p>
-                      <p className="text-sm text-muted-foreground">{activity.time}</p>
-                    </div>
-                  </div>
-                  <Badge
-                    className={`${
-                      activity.status === "published"
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : activity.status === "draft"
-                          ? "bg-yellow-50 text-yellow-700 border-yellow-200"
-                          : "bg-blue-50 text-blue-700 border-blue-200"
-                    } px-3 py-1 font-medium`}
-                  >
-                    {activity.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )
