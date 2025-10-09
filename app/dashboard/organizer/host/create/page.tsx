@@ -95,7 +95,7 @@ export default function CreateEventPage() {
       setBannerPreview(previewUrl)
 
       // Upload immediately and store permanent URL so it appears everywhere after create
-      const uploadedUrl = await uploadBannerToBlob(file)
+      const uploadedUrl = await uploadBannerToSupabase(file)
       handleInputChange("bannerUrl", uploadedUrl)
       handleInputChange("banner", file)
     } catch (error) {
@@ -123,21 +123,36 @@ export default function CreateEventPage() {
     }
   }
 
-  const uploadBannerToBlob = async (file: File): Promise<string> => {
+  const uploadBannerToSupabase = async (file: File): Promise<string> => {
+    console.log("Starting upload for file:", file.name, file.size, file.type)
+    
     const formData = new FormData()
     formData.append("file", file)
 
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    })
+    console.log("Sending request to /api/upload")
+    
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
 
-    if (!response.ok) {
-      throw new Error("Failed to upload banner")
+      console.log("Response status:", response.status)
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()))
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error("Upload failed with error:", errorData)
+        throw new Error(errorData.error || "Failed to upload banner")
+      }
+
+      const result = await response.json()
+      console.log("Upload successful:", result)
+      return result.url
+    } catch (error) {
+      console.error("Upload error:", error)
+      throw error
     }
-
-    const { url } = await response.json()
-    return url
   }
 
   const handleSubmit = async (e: React.FormEvent, isDraft = false) => {

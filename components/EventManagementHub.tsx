@@ -1,24 +1,27 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   Users, 
   Calendar, 
+  IndianRupee, 
+  MapPin, 
   Search, 
-  Plus,
-  Eye,
-  Edit,
-  UserCheck,
-  Clock,
-  CheckCircle,
-  XCircle,
-  MapPin,
-  IndianRupee
+  Plus, 
+  XCircle, 
+  CheckCircle, 
+  Clock, 
+  AlertCircle, 
+  Eye, 
+  Edit, 
+  Trash2,
+  UserCheck
 } from "lucide-react"
+import { EventImage } from "./EventImage"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 
@@ -29,14 +32,15 @@ interface Event {
   start_date: string
   end_date: string | null
   status: "draft" | "published" | "cancelled" | "completed"
-  current_participants: number
-  max_participants: number | null
   venue: string | null
   entry_fee: number
-  type: string
+  current_participants: number
+  max_participants: number | null
   mode: "online" | "offline" | "hybrid"
-  created_at: string
-}
+  type: string
+  category: string
+  image_url: string | null
+} 
 
 export default function EventManagementHub() {
   const [events, setEvents] = useState<Event[]>([])
@@ -138,20 +142,20 @@ export default function EventManagementHub() {
   }
 
   return (
-    <Card className="border-0 shadow-lg bg-white">
-      <CardHeader>
+    <Card className="border-0 shadow-xl bg-gradient-to-br from-white via-slate-50/50 to-purple-50/30 backdrop-blur-sm">
+      <CardHeader className="bg-gradient-to-r from-transparent via-purple-50/20 to-transparent">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold text-gray-900 flex items-center">
-              <Calendar className="h-6 w-6 mr-3 text-blue-600" />
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-indigo-900 bg-clip-text text-transparent flex items-center">
+              <Calendar className="h-6 w-6 mr-3 text-primary" />
               Event Management Hub
             </CardTitle>
-            <CardDescription className="text-gray-600 mt-2">
+            <CardDescription className="text-muted-foreground mt-2">
               Manage all your created events and view participant details
             </CardDescription>
           </div>
           <Link href="/dashboard/organizer/host">
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
+            <Button className="bg-gradient-to-r from-primary via-purple-600 to-indigo-600 hover:from-primary/90 hover:via-purple-600/90 hover:to-indigo-600/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
               <Plus className="h-4 w-4 mr-2" />
               Create New Event
             </Button>
@@ -197,19 +201,30 @@ export default function EventManagementHub() {
             {filteredEvents.map((event) => (
               <div
                 key={event.id}
-                className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-300 bg-gray-50/50"
+                className="border border-border/50 rounded-xl overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-500 bg-gradient-to-br from-card via-slate-50/30 to-purple-50/20 backdrop-blur-sm group"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
-                      <Badge className={getStatusColor(event.status)}>
-                        <div className="flex items-center space-x-1">
-                          {getStatusIcon(event.status)}
-                          <span>{event.status.charAt(0).toUpperCase() + event.status.slice(1)}</span>
-                        </div>
-                      </Badge>
-                    </div>
+                {/* Event Image */}
+                <div className="h-48 w-full">
+                  <EventImage
+                    src={event.image_url}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    fallbackClassName="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 via-purple-50 to-indigo-50"
+                  />
+                </div>
+
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
+                        <Badge className={getStatusColor(event.status)}>
+                          <div className="flex items-center space-x-1">
+                            {getStatusIcon(event.status)}
+                            <span>{event.status.charAt(0).toUpperCase() + event.status.slice(1)}</span>
+                          </div>
+                        </Badge>
+                      </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
                       <div className="flex items-center">
@@ -275,6 +290,7 @@ export default function EventManagementHub() {
                       View Details
                     </Button>
                   </div>
+                </div>
                 </div>
               </div>
             ))}
