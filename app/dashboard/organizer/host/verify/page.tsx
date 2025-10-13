@@ -76,7 +76,7 @@ export default function HostVerificationPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/20 to-white p-6">
       <div className="max-w-md mx-auto space-y-6">
         <Link
-          href="/dashboard/organizer"
+          href="/dashboard/student"
           className="inline-flex items-center text-slate-600 hover:text-slate-900 transition-colors"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />

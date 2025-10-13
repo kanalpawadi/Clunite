@@ -47,8 +47,8 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Brand palettes */
-    --brand-student-from: 222 89% 56%; /* sapphire */
-    --brand-student-to: 265 83% 58%;   /* iris */
+  --brand-student-from: 195 80% 45%; /* teal */
+  --brand-student-to: 260 75% 55%;   /* indigo */
     --brand-organizer-from: 18 90% 57%; /* orange */
     --brand-organizer-to: 340 82% 60%;  /* fuchsia */
     --brand-admin-from: 199 89% 48%;    /* cyan */
@@ -89,8 +89,8 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Brand palettes (dark can be slightly deeper) */
-    --brand-student-from: 223 89% 62%;
-    --brand-student-to: 267 83% 64%;
+  --brand-student-from: 195 82% 50%; /* teal (dark) */
+  --brand-student-to: 260 75% 58%;   /* indigo (dark) */
     --brand-organizer-from: 18 95% 62%;
     --brand-organizer-to: 340 88% 65%;
     --brand-admin-from: 199 93% 55%;
